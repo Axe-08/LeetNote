@@ -75,8 +75,8 @@ export function injectSidebar(): void {
   hostElement.style.boxShadow = '-2px 0 10px rgba(0,0,0,0.1)';
   hostElement.style.overflow = 'hidden';
 
-  // 2. Attach Shadow DOM in closed mode
-  shadowRootRef = hostElement.attachShadow({ mode: 'closed' });
+  // 2. Attach Shadow DOM in open mode to allow style encapsulation while remaining inspectable/testable
+  shadowRootRef = hostElement.attachShadow({ mode: 'open' });
 
   // 3. Inject CSS Link Tags into Shadow DOM
   const cssUrl = browser.runtime.getURL('sidebar.css');

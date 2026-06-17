@@ -11,6 +11,49 @@ import {
   AppError
 } from '../shared/types';
 
+type NotionBlock = Record<string, unknown>;
+
+interface NotionSearchResponse {
+  results: Array<{
+    id: string;
+    object: 'page' | 'database';
+    properties?: Record<string, {
+      type: string;
+      title?: Array<{ plain_text: string }>;
+      [key: string]: unknown;
+    }>;
+    title?: Array<{ plain_text: string }>;
+  }>;
+}
+
+interface NotionDatabaseQueryResponse {
+  results: Array<{
+    id: string;
+    properties: Record<string, {
+      type: string;
+      number?: number | null;
+      date?: { start: string | null } | null;
+      select?: { name: string } | null;
+      [key: string]: unknown;
+    }>;
+  }>;
+}
+
+interface NotionDatabaseResponse {
+  id: string;
+  properties: Record<string, {
+    id: string;
+    name: string;
+    type: string;
+    [key: string]: unknown;
+  }>;
+}
+
+interface NotionPageResponse {
+  id: string;
+  url: string;
+}
+
 export class NotionClient {
   private token: string;
   private databaseId: string;
@@ -32,8 +75,8 @@ export class NotionClient {
     this.lastRequestTime = Date.now();
   }
 
-  // Base API caller
-  private async apiCall(method: string, path: string, body?: object): Promise<any> {
+  // Base API caller using generic type parameters
+  private async apiCall<T>(method: string, path: string, body?: object): Promise<T> {
     await this.enforceRateLimit();
 
     const url = `${NOTION_API_BASE}${path}`;
@@ -74,7 +117,7 @@ export class NotionClient {
         }
       }
 
-      return await response.json();
+      return await response.json() as T;
     } catch (err) {
       if (err instanceof AppError) throw err;
       throw new AppError('LN_400', `Network failure reaching Notion API: ${err instanceof Error ? err.message : String(err)}`);
@@ -90,7 +133,7 @@ export class NotionClient {
     lastAttempted: string | null;
     confidenceHistory: Array<{ attemptNumber: number; rating: number | null; date: string }>;
   } | null> {
-    const response = await this.apiCall('POST', `/databases/${this.databaseId}/query`, {
+    const response = await this.apiCall<NotionDatabaseQueryResponse>('POST', `/databases/${this.databaseId}/query`, {
       filter: {
         property: 'Problem Number',
         number: {
@@ -110,16 +153,13 @@ export class NotionClient {
     const attemptCount = props['Attempts']?.number || 0;
     const lastAttempted = props['Last Attempted']?.date?.start || null;
 
-    // Parse confidence history if stored in log or properties.
-    // For now we initialize confidenceHistory with basic metadata
     const confidenceHistory: Array<{ attemptNumber: number; rating: number | null; date: string }> = [];
     if (attemptCount > 0 && lastAttempted) {
-      const confidence = props['Confidence']?.select?.name 
-        ? parseInt(props['Confidence']?.select?.name, 10) 
-        : null;
+      const confidenceName = props['Confidence']?.select?.name;
+      const confidence = confidenceName ? parseInt(confidenceName, 10) : null;
       confidenceHistory.push({
         attemptNumber: attemptCount,
-        rating: isNaN(Number(confidence)) ? null : confidence,
+        rating: confidence !== null && isNaN(confidence) ? null : confidence,
         date: lastAttempted
       });
     }
@@ -139,7 +179,7 @@ export class NotionClient {
     const today = new Date().toISOString().split('T')[0];
     const reviewDate = this.calculateNextReviewDate(payload.confidenceRating, 1);
 
-    const properties: Record<string, any> = {
+    const properties: Record<string, unknown> = {
       'Name': {
         title: [{ text: { content: payload.metadata.title } }]
       },
@@ -182,7 +222,7 @@ export class NotionClient {
 
     const children = this.buildPageBody(payload, 1);
 
-    const response = await this.apiCall('POST', '/pages', {
+    const response = await this.apiCall<NotionPageResponse>('POST', '/pages', {
       parent: { database_id: this.databaseId },
       icon: { type: 'emoji', emoji: '🧩' },
       properties,
@@ -197,14 +237,14 @@ export class NotionClient {
    */
   public async appendAttempt(pageId: string, payload: SaveProblemPayload, attemptNumber: number): Promise<void> {
     const children = this.buildAttemptBlocks(payload, attemptNumber);
-    await this.apiCall('PATCH', `/blocks/${pageId}/children`, { children });
+    await this.apiCall<unknown>('PATCH', `/blocks/${pageId}/children`, { children });
   }
 
   /**
    * Updates properties of an existing page.
    */
-  public async updatePageProperties(pageId: string, updates: Record<string, any>): Promise<void> {
-    await this.apiCall('PATCH', `/pages/${pageId}`, { properties: updates });
+  public async updatePageProperties(pageId: string, updates: Record<string, unknown>): Promise<void> {
+    await this.apiCall<unknown>('PATCH', `/pages/${pageId}`, { properties: updates });
   }
 
   /**
@@ -223,17 +263,15 @@ export class NotionClient {
       const today = new Date().toISOString().split('T')[0];
       const nextReview = this.calculateNextReviewDate(payload.confidenceRating, nextAttempt);
 
-      // 1. Append attempt blocks
       await this.appendAttempt(existing.pageId, payload, nextAttempt);
 
-      // 2. Update page metadata props
       const statusValue = payload.confidenceRating && payload.confidenceRating >= 4 
         ? 'Mastered' 
         : payload.confidenceRating && payload.confidenceRating >= 3 
           ? 'Solved' 
           : 'Attempted';
 
-      const updates: Record<string, any> = {
+      const updates: Record<string, unknown> = {
         'Last Attempted': { date: { start: today } },
         'Attempts': { number: nextAttempt },
         'Status': { select: { name: statusValue } }
@@ -256,7 +294,7 @@ export class NotionClient {
    * Searches for pages shared with the integration to use as parent page
    */
   public async listEligiblePages(): Promise<Array<{ id: string; title: string }>> {
-    const response = await this.apiCall('POST', '/search', {
+    const response = await this.apiCall<NotionSearchResponse>('POST', '/search', {
       filter: {
         value: 'page',
         property: 'object'
@@ -264,9 +302,9 @@ export class NotionClient {
       page_size: 10
     });
     
-    return (response.results || []).map((page: any) => {
-      const titleProp = page.properties && Object.values(page.properties).find((p: any) => p.type === 'title') as any;
-      const title = titleProp?.title?.[0]?.plain_text || 'Untitled Page';
+    return (response.results || []).map((page) => {
+      const titleProp = page.properties && Object.values(page.properties).find((p) => p.type === 'title');
+      const title = (titleProp as { title?: Array<{ plain_text: string }> } | undefined)?.title?.[0]?.plain_text || 'Untitled Page';
       return { id: page.id, title };
     });
   }
@@ -274,8 +312,8 @@ export class NotionClient {
   /**
    * Lists all databases shared with the integration
    */
-  public async listDatabases(): Promise<Array<{ id: string; title: string; properties: any }>> {
-    const response = await this.apiCall('POST', '/search', {
+  public async listDatabases(): Promise<Array<{ id: string; title: string; properties: Record<string, unknown> }>> {
+    const response = await this.apiCall<NotionSearchResponse>('POST', '/search', {
       filter: {
         value: 'database',
         property: 'object'
@@ -283,9 +321,9 @@ export class NotionClient {
       page_size: 20
     });
     
-    return (response.results || []).map((db: any) => {
+    return (response.results || []).map((db) => {
       const title = db.title?.[0]?.plain_text || 'Untitled Database';
-      return { id: db.id, title, properties: db.properties };
+      return { id: db.id, title, properties: (db.properties || {}) as Record<string, unknown> };
     });
   }
 
@@ -293,7 +331,7 @@ export class NotionClient {
    * Validates and updates database schema if properties are missing
    */
   public async validateAndFixDatabaseSchema(dbId: string): Promise<{ success: boolean; fixed: boolean; missing: string[] }> {
-    const db = await this.apiCall('GET', `/databases/${dbId}`);
+    const db = await this.apiCall<NotionDatabaseResponse>('GET', `/databases/${dbId}`);
     const props = db.properties || {};
     
     const requiredProps = {
@@ -338,7 +376,7 @@ export class NotionClient {
     };
     
     const missing: string[] = [];
-    const updates: Record<string, any> = {};
+    const updates: Record<string, unknown> = {};
     
     for (const [name, def] of Object.entries(requiredProps)) {
       if (!props[name]) {
@@ -351,8 +389,7 @@ export class NotionClient {
       return { success: true, fixed: false, missing: [] };
     }
     
-    // Perform PATCH to add missing fields
-    await this.apiCall('PATCH', `/databases/${dbId}`, { properties: updates });
+    await this.apiCall<unknown>('PATCH', `/databases/${dbId}`, { properties: updates });
     return { success: true, fixed: true, missing };
   }
 
@@ -360,7 +397,7 @@ export class NotionClient {
    * Auto-creates a new Notion database in user workspace
    */
   public async createDatabase(parentPageId: string): Promise<string> {
-    const response = await this.apiCall('POST', '/databases', {
+    const response = await this.apiCall<NotionDatabaseResponse>('POST', '/databases', {
       parent: { type: 'page_id', page_id: parentPageId },
       title: [{ type: 'text', text: { content: 'LeetNotion — DSA Journal' } }],
       icon: { type: 'emoji', emoji: '🧩' },
@@ -417,7 +454,6 @@ export class NotionClient {
     else if (rating === 2) days = 3;
     else if (rating === 3) days = 7;
     else {
-      // SM-2 algorithm simplified
       if (attemptNumber === 1) {
         days = rating * 3;
       } else {
@@ -431,10 +467,9 @@ export class NotionClient {
     return date.toISOString().split('T')[0];
   }
 
-  private buildPageBody(payload: SaveProblemPayload, attemptNumber: number): any[] {
-    const blocks: any[] = [];
+  private buildPageBody(payload: SaveProblemPayload, attemptNumber: number): NotionBlock[] {
+    const blocks: NotionBlock[] = [];
 
-    // 1. Difficulty-colored callout header
     const diffColor = payload.metadata.difficulty === 'Easy' ? 'green' : payload.metadata.difficulty === 'Medium' ? 'yellow' : 'red';
     blocks.push({
       object: 'block',
@@ -453,7 +488,6 @@ export class NotionClient {
       }
     });
 
-    // 2. Heading: Solutions
     blocks.push({
       object: 'block',
       type: 'heading_2',
@@ -462,10 +496,8 @@ export class NotionClient {
       }
     });
 
-    // 3. Attempt Toggle structure
     blocks.push(...this.buildAttemptBlocks(payload, attemptNumber));
 
-    // 4. Notes Section
     if (payload.notes.trim()) {
       blocks.push({
         object: 'block',
@@ -477,7 +509,6 @@ export class NotionClient {
       blocks.push(...this.markdownToBlocks(payload.notes));
     }
 
-    // 5. Community Clips Section
     if (payload.clips.length > 0) {
       blocks.push({
         object: 'block',
@@ -494,13 +525,12 @@ export class NotionClient {
     return blocks;
   }
 
-  private buildAttemptBlocks(payload: SaveProblemPayload, attemptNumber: number): any[] {
+  private buildAttemptBlocks(payload: SaveProblemPayload, attemptNumber: number): NotionBlock[] {
     const today = new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
     const codeLang = LANGUAGE_MAP[payload.solution.language.toLowerCase()] || 'plain text';
 
-    const childBlocks: any[] = [];
+    const childBlocks: NotionBlock[] = [];
 
-    // Code Block
     if (payload.solution.code.trim()) {
       childBlocks.push({
         object: 'block',
@@ -512,7 +542,6 @@ export class NotionClient {
       });
     }
 
-    // Complexity Callouts
     childBlocks.push({
       object: 'block',
       type: 'callout',
@@ -550,7 +579,7 @@ export class NotionClient {
     ];
   }
 
-  private buildQuoteBlock(clip: CommunityClip): any {
+  private buildQuoteBlock(clip: CommunityClip): NotionBlock {
     const handle = clip.authorHandle ? ` — @${clip.authorHandle}` : '';
     return {
       object: 'block',
@@ -566,7 +595,7 @@ export class NotionClient {
     };
   }
 
-  private markdownToBlocks(markdown: string): any[] {
+  private markdownToBlocks(markdown: string): NotionBlock[] {
     const lines = markdown.split('\n');
     return lines
       .filter((line) => line.trim())

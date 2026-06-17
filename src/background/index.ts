@@ -90,7 +90,7 @@ browser.runtime.onMessage.addListener((message: MessageEnvelope) => {
   const { type, requestId, payload } = message;
 
   // We return a Promise to let the browser know this handler is asynchronous
-  const handleMessage = async (): Promise<any> => {
+  const handleMessage = async (): Promise<unknown> => {
     switch (type) {
       case 'SAVE_PROBLEM': {
         const savePayload = payload as SaveProblemPayload;

@@ -8,7 +8,7 @@ import { FullSettingsObject } from '../shared/types';
 import { setupClippingListener } from './clipping-helpers';
 
 let currentProblemSlug: string | null = null;
-let navigationTimeout: any = null;
+let navigationTimeout: ReturnType<typeof setTimeout> | null = null;
 
 /**
  * Extracts the problem slug from the URL path.

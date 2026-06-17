@@ -1,6 +1,6 @@
 // Zustand store for sidebar state management
 import { create } from 'zustand';
-import { ProblemMetadata, CommunityClip, SaveProblemPayload } from '../shared/types';
+import { ProblemMetadata, CommunityClip, SaveProblemPayload, SaveProblemResponse } from '../shared/types';
 import { sendMessage } from '../shared/messages';
 import { scrape } from '../content/scraper';
 
@@ -159,7 +159,7 @@ export const useSidebarStore = create<SidebarStore>((set, get) => {
       };
 
       try {
-        const response = await sendMessage<any>('SAVE_PROBLEM', payload);
+        const response = await sendMessage<SaveProblemResponse>('SAVE_PROBLEM', payload);
         
         if (response.success && response.data) {
           const status = response.data.status; // 'synced' | 'queued'
