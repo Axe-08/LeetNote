@@ -1,0 +1,36 @@
+{
+  "title": [
+    "[data-cy=\"question-title\"]",
+    ".text-title-large a",
+    "h1.mr-2"
+  ],
+  "difficulty": [
+    "[diff]",
+    ".text-difficulty-easy",
+    ".text-difficulty-medium",
+    ".text-difficulty-hard",
+    "span.bg-olive",
+    "span.bg-yellow",
+    "span.bg-pink"
+  ],
+  "tags": [
+    "a.mr-1[href*=\"/tag/\"]",
+    "a[class*=\"topic-tag\"]",
+    ".flex.flex-wrap a[href*=\"tag\"]"
+  ],
+  "acceptanceRate": [
+    ".text-sd-foreground",
+    "div:has(> [data-key=\"acceptance-rate\"])",
+    "div:has-text(\"Acceptance Rate\") + div"
+  ],
+  "language": [
+    ".ant-select-selection-item",
+    "button[id^=\"headlessui-listbox-button\"]",
+    ".ant-select-single .ant-select-selector"
+  ],
+  "number": [
+    ".text-body.font-medium",
+    ".mr-2.text-label-1",
+    "span.mr-2"
+  ]
+}

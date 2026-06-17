@@ -1,0 +1,37 @@
+{
+  "name": "leetnote",
+  "version": "1.0.0",
+  "description": "Capture LeetCode solutions, notes, and community insights into a clean Notion database — without leaving your tab.",
+  "type": "module",
+  "scripts": {
+    "dev": "node build.js",
+    "build": "tsc && node build.js",
+    "lint": "eslint src/ --ext .ts,.tsx",
+    "test:unit": "vitest run",
+    "test:e2e": "playwright test",
+    "package": "mkdir -p releases && cd dist && zip -r ../releases/leetnote-v$npm_package_version.zip .",
+    "package:source": "mkdir -p releases && zip -r releases/leetnote-source.zip src/ package.json tsconfig.json vite.config.ts manifest.json"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "webextension-polyfill": "^0.12.0",
+    "zustand": "^4.5.2"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@types/webextension-polyfill": "^0.10.7",
+    "@typescript-eslint/eslint-plugin": "^7.13.0",
+    "@typescript-eslint/parser": "^7.13.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "eslint-plugin-react-refresh": "^0.4.7",
+    "prettier": "^3.3.2",
+    "typescript": "^5.2.2",
+    "vite": "^5.3.1",
+    "vitest": "^1.6.0"
+  }
+}

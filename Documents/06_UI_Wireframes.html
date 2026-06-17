@@ -1,0 +1,1473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LeetNote — UI Wireframes</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:       #111110;
+  --s1:       #1A1917;
+  --s2:       #222120;
+  --s3:       #2A2927;
+  --s4:       #323130;
+  --rule:     #252423;
+  --border:   #333230;
+  --border2:  #3D3C3A;
+  --ink:      #C4A96A;
+  --ink2:     #D6BC84;
+  --ink-dim:  rgba(196,169,106,0.12);
+  --ink-line: rgba(196,169,106,0.22);
+  --txt:      #DDD8CE;
+  --txt2:     #968E82;
+  --txt3:     #574F48;
+  --txt4:     #3A342E;
+  --code:     #C4A96A;
+  --easy:     #6A9E7A;
+  --medium:   #B8843A;
+  --hard:     #A85858;
+  --ok:       #6A9E7A;
+  --warn:     #B8843A;
+  --err:      #A85858;
+  --mono:     'JetBrains Mono','Fira Code','Cascadia Code',monospace;
+  --sans:     'Inter','Segoe UI',system-ui,sans-serif;
+}
+
+body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:13px;min-height:100vh;line-height:1.5}
+
+/* SVG icon helper */
+.ic{display:inline-block;vertical-align:middle;flex-shrink:0}
+.ic svg{display:block}
+
+/* ── PAGE HEADER ── */
+.ph{background:var(--s1);border-bottom:1px solid var(--border);padding:20px 36px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:200}
+.ph-mark{width:32px;height:32px;background:var(--s3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ph-name{font-size:15px;font-weight:700;letter-spacing:-0.01em}
+.ph-sub{font-size:11px;color:var(--txt3);margin-top:1px}
+.ph-chip{margin-left:auto;background:var(--ink-dim);border:1px solid var(--ink-line);color:var(--ink);font-size:10px;font-weight:700;padding:3px 10px;letter-spacing:0.06em;text-transform:uppercase}
+
+/* ── TABS ── */
+.tabs{display:flex;background:var(--s1);border-bottom:1px solid var(--border);padding:0 36px;overflow-x:auto}
+.tab{padding:12px 16px;font-size:12px;font-weight:500;color:var(--txt3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;letter-spacing:0.02em;transition:color 0.12s}
+.tab:hover{color:var(--txt2)}
+.tab.on{color:var(--ink);border-bottom-color:var(--ink)}
+
+/* ── CANVAS ── */
+.canvas{display:none;padding:36px;gap:36px;flex-wrap:wrap;align-items:flex-start}
+.canvas.on{display:flex}
+.sec-lbl{width:100%;font-size:10px;font-weight:700;letter-spacing:0.12em;color:var(--txt3);text-transform:uppercase;padding-bottom:10px;border-bottom:1px solid var(--rule)}
+.ann{font-size:10px;color:var(--ink);font-weight:600;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px}
+
+/* ── FRAME ── */
+.frame{background:var(--s1);border:1px solid var(--border);flex-shrink:0;overflow:hidden}
+.fl{font-size:10px;color:var(--txt3);font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:8px 14px 7px;background:var(--s2);border-bottom:1px solid var(--rule)}
+
+/* ── RULED LINES (notebook texture) ── */
+.ruled{background-image:repeating-linear-gradient(to bottom,transparent,transparent 23px,var(--rule) 23px,var(--rule) 24px);background-size:100% 24px}
+
+/* ─────────────────────────────────────────
+   SIDEBAR COMPONENTS
+───────────────────────────────────────── */
+.sb{width:344px}
+
+.sb-head{
+  display:flex;align-items:center;gap:9px;
+  padding:11px 14px;background:var(--s2);
+  border-bottom:1px solid var(--border);
+  border-left:2px solid var(--ink)
+}
+.sb-logo{font-size:11px;font-weight:800;letter-spacing:0.04em;color:var(--ink)}
+.sb-prob{margin-left:auto;display:flex;align-items:center;gap:7px;font-size:11px;color:var(--txt2)}
+.diff{font-size:9px;font-weight:700;letter-spacing:0.06em;padding:2px 6px;text-transform:uppercase}
+.diff.e{background:rgba(106,158,122,0.12);color:var(--easy)}
+.diff.m{background:rgba(184,132,58,0.12);color:var(--medium)}
+.diff.h{background:rgba(168,88,88,0.12);color:var(--hard)}
+
+.sb-banner{
+  padding:8px 14px 8px 16px;
+  background:var(--ink-dim);
+  border-bottom:1px solid var(--ink-line);
+  border-left:2px solid var(--ink);
+  font-size:11px;color:var(--ink2);
+  display:flex;align-items:center;gap:8px
+}
+.sb-banner-action{margin-left:auto;font-size:10px;color:var(--txt3);cursor:pointer;display:flex;align-items:center;gap:3px}
+
+/* Attempt Rail */
+.rail{padding:10px 14px;border-bottom:1px solid var(--rule);display:flex;gap:14px;align-items:center;background:var(--s2)}
+.rail-track{display:flex;flex-direction:column;align-items:center;gap:0}
+.rail-node{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.rail-seg{width:1px;height:20px;background:var(--border)}
+.rail-node.past-l{background:var(--err)}
+.rail-node.past-m{background:var(--warn)}
+.rail-node.past-h{background:var(--ok)}
+.rail-node.now{background:transparent;border:1.5px solid var(--ink)}
+.rail-info{font-size:10px;color:var(--txt2);line-height:1.7}
+.rail-info strong{color:var(--txt);font-weight:600}
+.rail-info em{color:var(--ink);font-style:normal;font-weight:600}
+
+/* Sections */
+.sb-sec{padding:11px 14px;border-bottom:1px solid var(--rule);border-left:2px solid transparent}
+.sb-sec:focus-within{border-left-color:var(--ink)}
+.sb-sh{font-size:9px;font-weight:700;letter-spacing:0.12em;color:var(--txt3);text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.sb-sh .ic{color:var(--txt3)}
+
+/* Notes textarea */
+.nb-area{
+  background:var(--s3);border:1px solid var(--border);
+  padding:9px 10px;min-height:82px;
+  font-size:12px;color:var(--txt2);font-style:italic;line-height:1.65;
+  position:relative;
+  background-image:repeating-linear-gradient(to bottom,transparent,transparent 22px,var(--rule) 22px,var(--rule) 23px);
+  background-size:100% 23px;background-position:0 1px
+}
+.nb-area .cc{position:absolute;bottom:6px;right:8px;font-size:9px;color:var(--txt3);font-style:normal;font-family:var(--mono)}
+
+/* Code block */
+.code-wrap{background:var(--bg);border:1px solid var(--border);overflow:hidden}
+.code-bar{display:flex;align-items:center;justify-content:space-between;padding:6px 10px;background:var(--s2);border-bottom:1px solid var(--border)}
+.code-lang{font-size:10px;color:var(--txt3);font-family:var(--mono);letter-spacing:0.04em}
+.code-stamp{font-size:9px;color:var(--txt3);font-family:var(--mono)}
+.cap-btn{font-size:10px;font-weight:700;padding:3px 9px;background:var(--s3);border:1px solid var(--border2);color:var(--txt2);cursor:pointer;letter-spacing:0.06em;display:flex;align-items:center;gap:5px}
+.cap-btn:hover{border-color:var(--ink);color:var(--ink)}
+.code-lines{padding:9px 10px;font-family:var(--mono);font-size:11px;color:var(--code);line-height:1.75;max-height:88px;overflow:hidden;position:relative}
+.code-lines::after{content:'';position:absolute;bottom:0;left:0;right:0;height:22px;background:linear-gradient(transparent,var(--bg))}
+
+/* Complexity */
+.cplx-row{display:flex;gap:8px}
+.cplx-box{flex:1;background:var(--s3);border:1px solid var(--border);padding:8px 10px}
+.cplx-box label{display:block;font-size:9px;color:var(--txt3);font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px}
+.cplx-val{font-family:var(--mono);font-size:12px;color:var(--code)}
+
+/* Confidence */
+.conf-row{display:flex;gap:5px;align-items:center}
+.cnode{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;cursor:pointer;font-family:var(--mono)}
+.cnode.f0{border-color:var(--err);background:var(--err);color:#fff}
+.cnode.f1{border-color:var(--warn);background:var(--warn);color:#fff}
+.cnode.f2{border-color:var(--ok);background:var(--ok);color:#fff}
+.cnode.empty{color:var(--txt4)}
+.conf-lbl{font-size:10px;color:var(--txt3);margin-left:5px}
+
+/* Clips */
+.clips-list{display:flex;flex-direction:column;gap:4px}
+.clip-row{display:flex;align-items:flex-start;gap:7px;background:var(--s3);padding:7px 9px;border:1px solid var(--rule)}
+.clip-ico{color:var(--txt3);flex-shrink:0;margin-top:1px}
+.clip-body{flex:1;overflow:hidden}
+.clip-txt{font-size:11px;color:var(--txt2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.4}
+.clip-src{font-size:9px;color:var(--txt3);margin-top:2px;font-family:var(--mono)}
+.clip-rm{color:var(--txt3);cursor:pointer;flex-shrink:0;margin-top:1px}
+.clip-rm:hover{color:var(--err)}
+
+/* Save button */
+.save-btn{
+  margin:12px 14px;padding:11px 14px;
+  background:var(--s3);border:1px solid var(--ink-line);
+  color:var(--ink);font-weight:700;font-size:13px;
+  cursor:pointer;text-align:center;letter-spacing:0.02em;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:background 0.15s,border-color 0.15s
+}
+.save-btn:hover{background:var(--ink-dim);border-color:var(--ink)}
+.save-btn.queued{background:rgba(184,132,58,0.1);border-color:rgba(184,132,58,0.3);color:var(--warn)}
+.save-btn.ok{background:rgba(106,158,122,0.1);border-color:rgba(106,158,122,0.3);color:var(--ok)}
+.save-btn.err{background:rgba(168,88,88,0.1);border-color:rgba(168,88,88,0.3);color:var(--err)}
+.save-btn.saving{opacity:0.6;pointer-events:none}
+
+/* ─────────────────────────────────────────
+   POPUP COMPONENTS
+───────────────────────────────────────── */
+.pop{width:296px}
+.pop-head{background:var(--s2);padding:13px 15px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;border-left:2px solid var(--ink)}
+.pop-mark{width:22px;height:22px;background:var(--s3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center}
+.pop-name{font-size:12px;font-weight:700;letter-spacing:0.02em}
+.pop-status{font-size:10px;margin-top:1px}
+.pop-status.ok{color:var(--ok)}
+.pop-status.warn{color:var(--warn)}
+.pop-status.err{color:var(--err)}
+.pop-gear{margin-left:auto;color:var(--txt3);cursor:pointer}
+.pop-body{padding:13px 15px}
+.stat-card{background:var(--s2);border:1px solid var(--border);padding:11px 12px;margin-bottom:10px}
+.sr{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--rule)}
+.sr:last-child{border-bottom:none;padding-bottom:0}
+.sl{font-size:11px;color:var(--txt2)}
+.sv{font-size:11px;font-weight:600}
+.sv.ok{color:var(--ok)}
+.sv.w{color:var(--warn)}
+.sv.e{color:var(--err)}
+.pop-btn{width:100%;padding:10px;background:var(--s3);border:1px solid var(--ink-line);color:var(--ink);font-weight:600;font-size:12px;cursor:pointer;margin-top:6px;display:flex;align-items:center;justify-content:center;gap:7px;letter-spacing:0.02em}
+.pop-btn:hover{background:var(--ink-dim)}
+.pop-btn.sec{background:transparent;border-color:var(--border);color:var(--txt2)}
+.pop-btn.sec:hover{border-color:var(--border2);color:var(--txt)}
+
+/* ─────────────────────────────────────────
+   ONBOARDING COMPONENTS
+───────────────────────────────────────── */
+.ob{width:440px}
+.ob-prog{display:flex;align-items:center;gap:0;padding:14px 22px;border-bottom:1px solid var(--border)}
+.ob-step{width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;border:1.5px solid var(--border2);color:var(--txt3);font-family:var(--mono)}
+.ob-step.done{background:var(--ok);border-color:var(--ok);color:#fff}
+.ob-step.now{background:var(--ink-dim);border-color:var(--ink);color:var(--ink)}
+.ob-line{flex:1;height:1px;background:var(--border)}
+.ob-line.done{background:var(--ok)}
+.ob-body{padding:26px 24px}
+.ob-icon{margin-bottom:14px;color:var(--ink);display:flex;justify-content:center}
+.ob-title{font-size:17px;font-weight:700;margin-bottom:8px;text-align:center;letter-spacing:-0.01em}
+.ob-sub{font-size:12px;color:var(--txt2);text-align:center;line-height:1.6;margin-bottom:22px}
+.ob-btn{width:100%;padding:12px;background:var(--s3);border:1px solid var(--ink-line);color:var(--ink);font-weight:700;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;letter-spacing:0.02em}
+.ob-btn:hover{background:var(--ink-dim)}
+.ob-skip{text-align:center;margin-top:11px;font-size:11px;color:var(--txt3);cursor:pointer}
+.ob-skip:hover{color:var(--txt2)}
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:22px}
+.feat-card{background:var(--s2);border:1px solid var(--border);padding:12px;border-left:2px solid var(--ink-line)}
+.feat-card-icon{color:var(--ink);margin-bottom:7px}
+.feat-card-title{font-size:12px;font-weight:600;margin-bottom:3px}
+.feat-card-desc{font-size:11px;color:var(--txt2);line-height:1.4}
+
+/* DB options */
+.db-opt{background:var(--s2);border:1px solid var(--border);padding:11px 13px;margin-bottom:7px;cursor:pointer;display:flex;align-items:center;gap:11px;transition:border-color 0.12s}
+.db-opt:hover{border-color:var(--border2)}
+.db-opt.sel{border-color:var(--ink);background:var(--ink-dim)}
+.db-name{font-size:12px;font-weight:600}
+.db-meta{font-size:10px;color:var(--txt2);margin-top:2px}
+.db-radio{width:13px;height:13px;border-radius:50%;border:1.5px solid var(--border2);margin-left:auto;flex-shrink:0}
+.db-radio.sel{border-color:var(--ink);background:var(--ink)}
+
+/* ─────────────────────────────────────────
+   SETTINGS
+───────────────────────────────────────── */
+.set-tabs{display:flex;gap:2px;padding:8px 10px;border-bottom:1px solid var(--border)}
+.set-tab{padding:5px 9px;font-size:11px;color:var(--txt3);cursor:pointer;letter-spacing:0.04em}
+.set-tab.on{background:var(--s3);color:var(--txt);font-weight:600}
+.set-body{padding:13px 15px}
+.set-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--rule)}
+.set-row:last-child{border-bottom:none}
+.set-name{font-size:12px}
+.set-desc{font-size:10px;color:var(--txt3);margin-top:2px}
+.tog{width:32px;height:17px;border-radius:0;background:var(--ink);position:relative;flex-shrink:0}
+.tog::after{content:'';width:13px;height:13px;background:var(--bg);position:absolute;top:2px;right:2px}
+.tog.off{background:var(--s4)}
+.tog.off::after{right:auto;left:2px}
+.kbd{font-family:var(--mono);font-size:10px;background:var(--s3);border:1px solid var(--border);padding:3px 8px;color:var(--txt2);letter-spacing:0.04em}
+
+/* ─────────────────────────────────────────
+   CONTEXT MENU & TOASTS
+───────────────────────────────────────── */
+.ctx{background:var(--s2);border:1px solid var(--border2);width:234px;box-shadow:0 8px 28px rgba(0,0,0,0.6)}
+.ctx-div{height:1px;background:var(--border);margin:3px 0}
+.ctx-item{padding:8px 13px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:9px;color:var(--txt2)}
+.ctx-item:hover{background:var(--s3);color:var(--txt)}
+.ctx-item.feat{color:var(--ink);font-weight:600}
+.ctx-item.feat:hover{background:var(--ink-dim)}
+.ctx-kb{margin-left:auto;font-size:10px;font-family:var(--mono);color:var(--txt3)}
+
+.toasts{display:flex;flex-direction:column;gap:8px}
+.toast{background:var(--s2);border:1px solid var(--border);padding:11px 13px;display:flex;gap:9px;align-items:flex-start;width:296px;box-shadow:0 4px 16px rgba(0,0,0,0.45)}
+.toast.ok{border-left:3px solid var(--ok)}
+.toast.warn{border-left:3px solid var(--warn)}
+.toast.err{border-left:3px solid var(--err)}
+.t-ico{flex-shrink:0;margin-top:1px}
+.t-title{font-size:12px;font-weight:600}
+.t-sub{font-size:11px;color:var(--txt2);margin-top:2px}
+.t-acts{display:flex;gap:7px;margin-top:8px}
+.t-btn{font-size:10px;font-weight:700;padding:4px 10px;cursor:pointer;border:none;letter-spacing:0.04em}
+.t-btn.p{background:var(--s3);border:1px solid var(--ink-line);color:var(--ink)}
+.t-btn.g{background:transparent;border:1px solid var(--border);color:var(--txt3)}
+.t-close{margin-left:auto;color:var(--txt3);cursor:pointer;flex-shrink:0}
+
+/* inline clip toast */
+.clip-toast{background:var(--s2);border:1px solid var(--border2);padding:6px 13px;display:inline-flex;align-items:center;gap:7px;box-shadow:0 4px 14px rgba(0,0,0,0.5)}
+.clip-toast-txt{font-size:11px;font-weight:700;color:var(--ink);letter-spacing:0.03em}
+
+/* ─────────────────────────────────────────
+   NOTION PAGE OUTPUT
+───────────────────────────────────────── */
+.np{width:540px;background:#161616;color:#E3E3E0}
+.np-head{padding:36px 50px 18px}
+.np-icon-area{width:44px;height:44px;background:#1E1E1E;border:1px solid #2A2A2A;display:flex;align-items:center;justify-content:center;margin-bottom:12px;color:#787774}
+.np-title{font-size:28px;font-weight:700;color:#E3E3E0;margin-bottom:3px;font-family:ui-serif,Georgia,serif}
+.np-props{border:1px solid #2A2A2A;overflow:hidden;margin-bottom:20px}
+.np-prop{display:flex;border-bottom:1px solid #202020}
+.np-prop:last-child{border-bottom:none}
+.np-pk{background:#1A1A1A;padding:6px 11px;font-size:11px;color:#6B6B68;width:130px;flex-shrink:0}
+.np-pv{background:#1A1A1A;padding:6px 11px;font-size:11px;color:#C9C9C4;display:flex;align-items:center;gap:5px}
+.np-tag{background:#2A2A2A;padding:2px 7px;font-size:10px;color:#C9C9C4}
+.np-content{padding:0 50px 28px}
+.np-h2{font-size:17px;font-weight:600;color:#E3E3E0;margin:18px 0 8px;font-family:ui-serif,Georgia,serif;padding-left:0;border-left:2px solid #333}
+.np-h2.ink{border-left-color:#C4A96A}
+.np-callout{display:flex;gap:9px;padding:10px 13px;margin-bottom:8px;align-items:flex-start}
+.np-callout.easy{background:#1A2920;border-left:3px solid #6A9E7A}
+.np-callout.gray{background:#1E1E1E;border-left:3px solid #333}
+.np-callout-ico{color:#6B6B68;flex-shrink:0;margin-top:1px}
+.np-callout-txt{font-size:12px;color:#C9C9C4;line-height:1.5}
+.np-toggle{background:#1E1E1E;border:1px solid #242424;padding:9px 13px;margin-bottom:5px;display:flex;align-items:center;gap:8px;cursor:pointer}
+.np-toggle.active{border-color:#C4A96A40}
+.np-toggle-arrow{color:#555;font-size:10px}
+.np-toggle-title{font-size:12px;font-weight:600;color:#E3E3E0}
+.np-toggle-sub{font-size:10px;color:#6B6B68;margin-left:auto}
+.np-code{background:#111;padding:11px 13px;font-family:var(--mono);font-size:11px;color:#C4A96A;line-height:1.75;margin:7px 14px;border-left:2px solid #333}
+.np-quote{border-left:2px solid #3A3A38;padding:7px 13px;margin:5px 0;font-size:12px;color:#B0ADA6;font-style:italic;line-height:1.6}
+.np-tbl{border:1px solid #242424;overflow:hidden;margin-top:6px}
+.np-tbl-head{display:grid;grid-template-columns:60px 110px 80px 1fr;background:#1A1A1A}
+.np-tbl-row{display:grid;grid-template-columns:60px 110px 80px 1fr;border-top:1px solid #1E1E1E}
+.np-tc{padding:6px 10px;font-size:11px;color:#6B6B68}
+.np-td{padding:6px 10px;font-size:11px;color:#C9C9C4}
+
+/* ─────────────────────────────────────────
+   STATES
+───────────────────────────────────────── */
+.st-row{display:flex;gap:20px;flex-wrap:wrap;align-items:flex-end}
+.st-item{display:flex;flex-direction:column;align-items:center;gap:8px}
+.st-mark{width:44px;height:44px;background:var(--s2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;position:relative;color:var(--txt2)}
+.st-mark.active{border-color:var(--ink);background:var(--ink-dim);color:var(--ink)}
+.st-mark.warn{border-color:var(--warn);background:rgba(184,132,58,0.1);color:var(--warn)}
+.st-mark.err{border-color:var(--err);background:rgba(168,88,88,0.1);color:var(--err)}
+.st-dot{width:9px;height:9px;border-radius:50%;position:absolute;bottom:-2px;right:-2px;border:2px solid var(--bg)}
+.st-lbl{font-size:10px;color:var(--txt3);text-align:center;line-height:1.4}
+
+/* misc */
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.mt6{margin-top:6px}
+.mt12{margin-top:12px}
+.mt18{margin-top:18px}
+.rule-div{width:100%;height:1px;background:var(--rule);margin:8px 0}
+</style>
+</head>
+<body>
+
+<!-- ══ SVG ICON SYSTEM ══ -->
+<svg aria-hidden="true" style="display:none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<symbol id="ic-save" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M2 13V3a1 1 0 0 1 1-1h7.5L14 5.5V13a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z"/>
+  <path d="M10 2v4H5V2"/><path d="M4 9h8"/>
+</symbol>
+<symbol id="ic-note" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M11.5 2.5l2 2-7 7H4.5v-2z"/><path d="M10 4l2 2"/>
+</symbol>
+<symbol id="ic-code" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="5,4 1.5,8 5,12"/><polyline points="11,4 14.5,8 11,12"/>
+</symbol>
+<symbol id="ic-clock" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+  <circle cx="8" cy="8" r="5.5"/><polyline points="8,5 8,8.5 10.5,10.5" stroke-linejoin="round"/>
+</symbol>
+<symbol id="ic-star" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+  <polygon points="8,1.5 9.9,6.1 15,6.5 11.2,10 12.5,15 8,12.3 3.5,15 4.8,10 1,6.5 6.1,6.1"/>
+</symbol>
+<symbol id="ic-clip" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+  <path d="M13.5 8l-5 5a3.5 3.5 0 0 1-5-5l5.5-5.5a2 2 0 0 1 2.8 2.8L6.5 10.5a.7.7 0 0 1-1-1L11 4"/>
+</symbol>
+<symbol id="ic-sliders" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+  <line x1="1" y1="5" x2="15" y2="5"/><line x1="1" y1="11" x2="15" y2="11"/>
+  <circle cx="5" cy="5" r="1.8" fill="currentColor" stroke="none"/>
+  <circle cx="11" cy="11" r="1.8" fill="currentColor" stroke="none"/>
+</symbol>
+<symbol id="ic-chevron-r" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="6,4 10,8 6,12"/>
+</symbol>
+<symbol id="ic-chevron-d" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="4,6 8,10 12,6"/>
+</symbol>
+<symbol id="ic-close" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+  <line x1="4" y1="4" x2="12" y2="12"/><line x1="12" y1="4" x2="4" y2="12"/>
+</symbol>
+<symbol id="ic-check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="2,8 6,12 14,4"/>
+</symbol>
+<symbol id="ic-retry" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M2.5 8a5.5 5.5 0 1 1 1 3.2"/><polyline points="2.5,5 2.5,9 6.5,9"/>
+</symbol>
+<symbol id="ic-calendar" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+  <rect x="2" y="3" width="12" height="11" rx="0"/><line x1="2" y1="7" x2="14" y2="7"/>
+  <line x1="5.5" y1="1.5" x2="5.5" y2="4.5"/><line x1="10.5" y1="1.5" x2="10.5" y2="4.5"/>
+</symbol>
+<symbol id="ic-alert" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M8 2L14.5 13H1.5z"/><line x1="8" y1="7" x2="8" y2="10"/>
+  <circle cx="8" cy="12" r="0.5" fill="currentColor" stroke="none"/>
+</symbol>
+<symbol id="ic-layers" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+  <polygon points="8,1.5 14,5 8,8.5 2,5"/>
+  <polyline points="2,9 8,12.5 14,9"/>
+</symbol>
+<symbol id="ic-link" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+  <path d="M6.5 9.5l3-3M10 4.5h1.5V6M4.5 6.5H3a3 3 0 1 0 0 6h2M9.5 10H11a3 3 0 1 0 0-6H9.5"/>
+</symbol>
+<symbol id="ic-db" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+  <ellipse cx="8" cy="4.5" rx="5.5" ry="2"/>
+  <path d="M2.5 4.5v3c0 1.1 2.5 2 5.5 2s5.5-.9 5.5-2v-3"/>
+  <path d="M2.5 7.5v3c0 1.1 2.5 2 5.5 2s5.5-.9 5.5-2v-3"/>
+</symbol>
+<symbol id="ic-arrow-r" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+  <line x1="2.5" y1="8" x2="13.5" y2="8"/><polyline points="9.5,4 13.5,8 9.5,12"/>
+</symbol>
+<symbol id="ic-back" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+  <line x1="13.5" y1="8" x2="2.5" y2="8"/><polyline points="6.5,4 2.5,8 6.5,12"/>
+</symbol>
+<symbol id="ic-notion" viewBox="0 0 16 16" fill="currentColor">
+  <rect x="2" y="1" width="12" height="14" rx="1" fill="none" stroke="currentColor" stroke-width="1.5"/>
+  <line x1="5" y1="5" x2="11" y2="5" stroke="currentColor" stroke-width="1.2"/>
+  <line x1="5" y1="8" x2="11" y2="8" stroke="currentColor" stroke-width="1.2"/>
+  <line x1="5" y1="11" x2="8" y2="11" stroke="currentColor" stroke-width="1.2"/>
+</symbol>
+<symbol id="ic-queue" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+  <rect x="2" y="3" width="12" height="10" rx="0"/>
+  <line x1="5" y1="7" x2="11" y2="7"/><line x1="5" y1="10" x2="9" y2="10"/>
+  <line x1="2" y1="3" x2="14" y2="3"/>
+</symbol>
+<symbol id="ic-disconnect" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+  <path d="M10 4l-4 4m0-4l4 4M5 2.5H3a1.5 1.5 0 0 0 0 3h.5M11 13.5H13a1.5 1.5 0 0 0 0-3h-.5"/>
+  <line x1="12" y1="2" x2="4" y2="14"/>
+</symbol>
+</defs>
+</svg>
+
+<!-- ══ HEADER ══ -->
+<div class="ph">
+  <div class="ph-mark">
+    <svg class="ic" width="16" height="16"><use href="#ic-note"/></svg>
+  </div>
+  <div>
+    <div class="ph-name">LeetNote</div>
+    <div class="ph-sub">UI Wireframes &amp; Component Reference</div>
+  </div>
+  <div class="ph-chip">v1.0 Wireframes</div>
+</div>
+
+<!-- ══ TABS ══ -->
+<div class="tabs">
+  <div class="tab on" onclick="show('sidebar',this)">Sidebar — Main UI</div>
+  <div class="tab" onclick="show('popup',this)">Extension Popup</div>
+  <div class="tab" onclick="show('onboarding',this)">Onboarding</div>
+  <div class="tab" onclick="show('context',this)">Context Menu &amp; Toasts</div>
+  <div class="tab" onclick="show('notion',this)">Notion Page Output</div>
+  <div class="tab" onclick="show('settings',this)">Settings Panel</div>
+  <div class="tab" onclick="show('states',this)">States &amp; Tokens</div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════
+     SIDEBAR
+═══════════════════════════════════════════════ -->
+<div id="c-sidebar" class="canvas on">
+
+  <div class="sec-lbl">Sidebar — injected into LeetCode, 344px wide, shadow DOM isolated</div>
+
+  <!-- NEW PROBLEM -->
+  <div>
+    <div class="ann">New Problem — Attempt 1</div>
+    <div class="frame sb mt6">
+      <div class="fl">Sidebar · New Problem</div>
+
+      <div class="sb-head">
+        <span class="ic" style="color:var(--txt3);cursor:pointer"><svg width="14" height="14"><use href="#ic-back"/></svg></span>
+        <span class="sb-logo">LeetNote</span>
+        <div class="sb-prob">
+          <span style="font-size:11px;color:var(--txt)">Two Sum  #1</span>
+          <span class="diff e">Easy</span>
+        </div>
+        <span class="ic" style="color:var(--txt3);cursor:pointer;margin-left:6px"><svg width="13" height="13"><use href="#ic-close"/></svg></span>
+      </div>
+
+      <!-- NOTES -->
+      <div class="sb-sec">
+        <div class="sb-sh">
+          <span class="ic"><svg width="12" height="12"><use href="#ic-note"/></svg></span>
+          My Notes
+        </div>
+        <div class="nb-area ruled">
+          Use a hash map to store seen values. Single pass O(n).
+          Key insight: complement = target &minus; current.
+          <div class="cc">51 / 2000</div>
+        </div>
+      </div>
+
+      <!-- CODE -->
+      <div class="sb-sec">
+        <div class="sb-sh">
+          <span class="ic"><svg width="12" height="12"><use href="#ic-code"/></svg></span>
+          My Solution
+        </div>
+        <div class="code-wrap">
+          <div class="code-bar">
+            <span class="code-lang">python3</span>
+            <span class="code-stamp">auto &middot; just now</span>
+            <button class="cap-btn">
+              <svg width="11" height="11"><use href="#ic-save"/></svg>
+              Capture
+            </button>
+          </div>
+          <div class="code-lines">
+class Solution:<br>
+&nbsp;&nbsp;def twoSum(self, nums, target):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;seen = {}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;for i, n in enumerate(nums):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if target - n in seen:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return [seen[target-n], i]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;seen[n] = i
+          </div>
+        </div>
+      </div>
+
+      <!-- COMPLEXITY -->
+      <div class="sb-sec">
+        <div class="sb-sh">
+          <span class="ic"><svg width="12" height="12"><use href="#ic-clock"/></svg></span>
+          Complexity
+        </div>
+        <div class="cplx-row">
+          <div class="cplx-box"><label>Time</label><div class="cplx-val">O(n)</div></div>
+          <div class="cplx-box"><label>Space</label><div class="cplx-val">O(n)</div></div>
+        </div>
+      </div>
+
+      <!-- CONFIDENCE -->
+      <div class="sb-sec">
+        <div class="sb-sh">
+          <span class="ic"><svg width="12" height="12"><use href="#ic-star"/></svg></span>
+          Confidence
+        </div>
+        <div class="conf-row">
+          <div class="cnode f0">1</div>
+          <div class="cnode f0">2</div>
+          <div class="cnode f0">3</div>
+          <div class="cnode f2">4</div>
+          <div class="cnode empty">5</div>
+          <span class="conf-lbl">Good &mdash; review in 14 days</span>
+        </div>
+      </div>
+
+      <!-- CLIPS -->
+      <div class="sb-sec">
+        <div class="sb-sh" style="justify-content:space-between">
+          <span style="display:flex;align-items:center;gap:6px">
+            <span class="ic"><svg width="12" height="12"><use href="#ic-clip"/></svg></span>
+            Clips (2)
+          </span>
+          <span style="font-size:9px;font-weight:700;color:var(--err);cursor:pointer;letter-spacing:0.08em">CLEAR ALL</span>
+        </div>
+        <div class="clips-list">
+          <div class="clip-row">
+            <span class="clip-ico ic"><svg width="12" height="12"><use href="#ic-clip"/></svg></span>
+            <div class="clip-body">
+              <div class="clip-txt">"Use a sliding window to track frequency..."</div>
+              <div class="clip-src">text &middot; discuss/23451</div>
+            </div>
+            <span class="clip-rm ic"><svg width="11" height="11"><use href="#ic-close"/></svg></span>
+          </div>
+          <div class="clip-row">
+            <span class="clip-ico ic"><svg width="12" height="12"><use href="#ic-code"/></svg></span>
+            <div class="clip-body">
+              <div class="clip-txt">def hashmap_solution(nums, target):</div>
+              <div class="clip-src">code &middot; discuss/23492</div>
+            </div>
+            <span class="clip-rm ic"><svg width="11" height="11"><use href="#ic-close"/></svg></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="save-btn">
+        <svg width="14" height="14"><use href="#ic-save"/></svg>
+        Save to Notion
+      </div>
+    </div>
+  </div>
+
+  <!-- REVISIT -->
+  <div>
+    <div class="ann">Revisit — Attempt 2 Detected</div>
+    <div class="frame sb mt6">
+      <div class="fl">Sidebar · Revisit</div>
+
+      <div class="sb-head">
+        <span class="ic" style="color:var(--txt3)"><svg width="14" height="14"><use href="#ic-back"/></svg></span>
+        <span class="sb-logo">LeetNote</span>
+        <div class="sb-prob">
+          <span style="font-size:11px;color:var(--txt)">Two Sum  #1</span>
+          <span class="diff e">Easy</span>
+        </div>
+        <span class="ic" style="color:var(--txt3);margin-left:6px"><svg width="13" height="13"><use href="#ic-close"/></svg></span>
+      </div>
+
+      <!-- revisit banner -->
+      <div class="sb-banner">
+        <span class="ic"><svg width="13" height="13"><use href="#ic-layers"/></svg></span>
+        <span>You've solved this before &mdash; saving as <strong>Attempt 2</strong></span>
+        <span class="sb-banner-action">
+          View <svg width="11" height="11"><use href="#ic-chevron-r"/></svg>
+        </span>
+      </div>
+
+      <!-- rail -->
+      <div class="rail">
+        <div class="rail-track">
+          <div class="rail-node past-m"></div>
+          <div class="rail-seg"></div>
+          <div class="rail-node now"></div>
+        </div>
+        <div class="rail-info">
+          <div><strong>Attempt 1</strong> &nbsp;&middot;&nbsp; Jan 15, 2024 &nbsp;&middot;&nbsp; Hard</div>
+          <div><em>Attempt 2</em> &nbsp;&middot;&nbsp; Now (current session)</div>
+        </div>
+      </div>
+
+      <div class="sb-sec">
+        <div class="sb-sh">
+          <span class="ic"><svg width="12" height="12"><use href="#ic-note"/></svg></span>
+          My Notes
+        </div>
+        <div class="nb-area ruled" style="color:var(--txt3)">
+          What changed this time? Any new insights&hellip;
+          <div class="cc">0 / 2000</div>
+        </div>
+      </div>
+
+      <div class="sb-sec">
+        <div class="sb-sh">
+          <span class="ic"><svg width="12" height="12"><use href="#ic-clock"/></svg></span>
+          Complexity
+        </div>
+        <div class="cplx-row">
+          <div class="cplx-box"><label>Time</label><div class="cplx-val" style="color:var(--txt3)">O(&hellip;)</div></div>
+          <div class="cplx-box"><label>Space</label><div class="cplx-val" style="color:var(--txt3)">O(&hellip;)</div></div>
+        </div>
+      </div>
+
+      <div class="sb-sec">
+        <div class="sb-sh">
+          <span class="ic"><svg width="12" height="12"><use href="#ic-star"/></svg></span>
+          Confidence
+        </div>
+        <div class="conf-row">
+          <div class="cnode empty">1</div>
+          <div class="cnode empty">2</div>
+          <div class="cnode empty">3</div>
+          <div class="cnode empty">4</div>
+          <div class="cnode empty">5</div>
+          <span class="conf-lbl" style="color:var(--txt4)">Rate this attempt</span>
+        </div>
+      </div>
+
+      <div class="save-btn">
+        <svg width="14" height="14"><use href="#ic-save"/></svg>
+        Save as Attempt 2
+      </div>
+    </div>
+  </div>
+
+  <!-- SAVE STATES -->
+  <div>
+    <div class="ann">Save Button States</div>
+    <div style="display:flex;flex-direction:column;gap:9px;margin-top:6px">
+      <div class="save-btn" style="width:220px;margin:0">
+        <svg width="14" height="14"><use href="#ic-save"/></svg>
+        Save to Notion
+      </div>
+      <div class="save-btn saving" style="width:220px;margin:0;opacity:0.55">
+        <svg width="14" height="14"><use href="#ic-retry"/></svg>
+        Saving&hellip;
+      </div>
+      <div class="save-btn ok" style="width:220px;margin:0">
+        <svg width="14" height="14"><use href="#ic-check"/></svg>
+        Saved &mdash; Attempt 1
+      </div>
+      <div class="save-btn queued" style="width:220px;margin:0">
+        <svg width="14" height="14"><use href="#ic-queue"/></svg>
+        Queued &mdash; will sync soon
+      </div>
+      <div class="save-btn err" style="width:220px;margin:0">
+        <svg width="14" height="14"><use href="#ic-retry"/></svg>
+        Retry Save
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     POPUP
+═══════════════════════════════════════════════ -->
+<div id="c-popup" class="canvas">
+  <div class="sec-lbl">Extension Popup — 296px · toolbar icon click</div>
+
+  <!-- ON LEETCODE -->
+  <div>
+    <div class="ann">On LeetCode — Synced</div>
+    <div class="frame pop mt6">
+      <div class="fl">Popup · Active</div>
+      <div class="pop-head">
+        <div class="pop-mark"><svg width="13" height="13" style="color:var(--ink)"><use href="#ic-note"/></svg></div>
+        <div>
+          <div class="pop-name">LeetNote</div>
+          <div class="pop-status ok">Connected</div>
+        </div>
+        <div class="pop-gear"><svg width="13" height="13" style="color:var(--txt3)"><use href="#ic-sliders"/></svg></div>
+      </div>
+      <div class="pop-body">
+        <div class="stat-card">
+          <div class="sr"><span class="sl">Current problem</span><span class="sv">Two Sum  #1</span></div>
+          <div class="sr"><span class="sl">Entry status</span><span class="sv ok">Not saved yet</span></div>
+          <div class="sr"><span class="sl">Sync queue</span><span class="sv ok">All clear</span></div>
+          <div class="sr"><span class="sl">Database</span><span class="sv" style="color:var(--txt2);font-size:10px">DSA Practice Log</span></div>
+        </div>
+        <button class="pop-btn">
+          <svg width="13" height="13"><use href="#ic-note"/></svg>
+          Open Sidebar
+        </button>
+        <button class="pop-btn sec" style="margin-top:6px">
+          <svg width="13" height="13"><use href="#ic-notion"/></svg>
+          View in Notion
+          <svg width="11" height="11" style="margin-left:auto"><use href="#ic-arrow-r"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUEUE PENDING -->
+  <div>
+    <div class="ann">Off LeetCode — Queue Pending</div>
+    <div class="frame pop mt6">
+      <div class="fl">Popup · Queue Warning</div>
+      <div class="pop-head" style="border-left-color:var(--warn)">
+        <div class="pop-mark" style="border-color:var(--warn);color:var(--warn)"><svg width="13" height="13"><use href="#ic-alert"/></svg></div>
+        <div>
+          <div class="pop-name">LeetNote</div>
+          <div class="pop-status warn">2 items pending</div>
+        </div>
+        <div class="pop-gear"><svg width="13" height="13" style="color:var(--txt3)"><use href="#ic-sliders"/></svg></div>
+      </div>
+      <div class="pop-body">
+        <div class="stat-card">
+          <div class="sr"><span class="sl">Pending sync</span><span class="sv w">2 items</span></div>
+          <div class="sr" style="flex-direction:column;align-items:flex-start;gap:4px">
+            <span class="sl">Queued entries</span>
+            <div style="background:var(--s1);border:1px solid var(--rule);padding:7px 9px;width:100%;font-size:11px;color:var(--txt2)">
+              Two Sum &nbsp;&middot;&nbsp; 3 attempts<br>
+              <span style="color:var(--txt3)">Add Two Numbers &nbsp;&middot;&nbsp; 1 attempt</span>
+            </div>
+          </div>
+        </div>
+        <button class="pop-btn" style="border-color:rgba(184,132,58,0.3);color:var(--warn);background:rgba(184,132,58,0.08)">
+          <svg width="13" height="13"><use href="#ic-retry"/></svg>
+          Retry All Now
+        </button>
+        <button class="pop-btn sec" style="margin-top:6px">
+          Open LeetCode
+          <svg width="11" height="11" style="margin-left:auto"><use href="#ic-arrow-r"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DISCONNECTED -->
+  <div>
+    <div class="ann">Disconnected State</div>
+    <div class="frame pop mt6">
+      <div class="fl">Popup · Not Connected</div>
+      <div class="pop-head" style="border-left-color:var(--err)">
+        <div class="pop-mark" style="border-color:var(--err);color:var(--err)"><svg width="13" height="13"><use href="#ic-disconnect"/></svg></div>
+        <div>
+          <div class="pop-name">LeetNote</div>
+          <div class="pop-status err">Not connected</div>
+        </div>
+      </div>
+      <div class="pop-body">
+        <div style="text-align:center;padding:18px 0 22px">
+          <div style="color:var(--txt3);display:flex;justify-content:center;margin-bottom:12px">
+            <svg width="32" height="32"><use href="#ic-notion"/></svg>
+          </div>
+          <div style="font-size:13px;font-weight:700;margin-bottom:6px">Connect Notion</div>
+          <div style="font-size:11px;color:var(--txt2);line-height:1.6">Link your workspace to begin saving problems and tracking progress.</div>
+        </div>
+        <button class="pop-btn">
+          <svg width="13" height="13"><use href="#ic-notion"/></svg>
+          Connect with Notion
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     ONBOARDING
+═══════════════════════════════════════════════ -->
+<div id="c-onboarding" class="canvas">
+  <div class="sec-lbl">Onboarding Wizard — 440px · First-run, opens automatically after install</div>
+
+  <!-- STEP 1 -->
+  <div>
+    <div class="ann">Step 1 — Welcome</div>
+    <div class="frame ob mt6">
+      <div class="fl">Onboarding · Step 1 of 5</div>
+      <div class="ob-prog">
+        <div class="ob-step now" style="font-family:var(--mono)">1</div>
+        <div class="ob-line"></div>
+        <div class="ob-step">2</div>
+        <div class="ob-line"></div>
+        <div class="ob-step">3</div>
+        <div class="ob-line"></div>
+        <div class="ob-step">4</div>
+        <div class="ob-line"></div>
+        <div class="ob-step">5</div>
+      </div>
+      <div class="ob-body">
+        <div class="ob-icon"><svg width="36" height="36"><use href="#ic-note"/></svg></div>
+        <div class="ob-title">Welcome to LeetNote</div>
+        <div class="ob-sub">Stop losing your hard-won insights.<br>Every problem. Every attempt. One clean Notion database.</div>
+        <div class="feat-grid">
+          <div class="feat-card">
+            <div class="feat-card-icon ic"><svg width="16" height="16"><use href="#ic-save"/></svg></div>
+            <div class="feat-card-title">Auto-capture</div>
+            <div class="feat-card-desc">Metadata, code, tags extracted instantly on save</div>
+          </div>
+          <div class="feat-card">
+            <div class="feat-card-icon ic"><svg width="16" height="16"><use href="#ic-clip"/></svg></div>
+            <div class="feat-card-title">Clip community</div>
+            <div class="feat-card-desc">Save brilliant discussion explanations on the fly</div>
+          </div>
+          <div class="feat-card">
+            <div class="feat-card-icon ic"><svg width="16" height="16"><use href="#ic-layers"/></svg></div>
+            <div class="feat-card-title">Track progress</div>
+            <div class="feat-card-desc">Version every attempt — never overwrite your work</div>
+          </div>
+          <div class="feat-card">
+            <div class="feat-card-icon ic"><svg width="16" height="16"><use href="#ic-calendar"/></svg></div>
+            <div class="feat-card-title">Spaced review</div>
+            <div class="feat-card-desc">Auto-scheduled next review dates by confidence</div>
+          </div>
+        </div>
+        <button class="ob-btn">
+          Get Started
+          <svg width="13" height="13"><use href="#ic-arrow-r"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div>
+    <div class="ann">Step 2 — Connect Notion</div>
+    <div class="frame ob mt6">
+      <div class="fl">Onboarding · Step 2 of 5</div>
+      <div class="ob-prog">
+        <div class="ob-step done"><svg width="12" height="12"><use href="#ic-check"/></svg></div>
+        <div class="ob-line done"></div>
+        <div class="ob-step now">2</div>
+        <div class="ob-line"></div>
+        <div class="ob-step">3</div>
+        <div class="ob-line"></div>
+        <div class="ob-step">4</div>
+        <div class="ob-line"></div>
+        <div class="ob-step">5</div>
+      </div>
+      <div class="ob-body">
+        <div class="ob-icon"><svg width="36" height="36"><use href="#ic-notion"/></svg></div>
+        <div class="ob-title">Connect your workspace</div>
+        <div class="ob-sub">LeetNote only needs access to create and update pages. We request the minimum necessary permissions.</div>
+        <button class="ob-btn" style="background:#fff;color:#000;border-color:#ddd;margin-bottom:12px">
+          <svg width="15" height="15" style="color:#000"><use href="#ic-notion"/></svg>
+          Continue with Notion
+        </button>
+        <div style="background:var(--s2);border:1px solid var(--border);padding:12px;font-size:11px;color:var(--txt2);border-left:2px solid var(--ink-line)">
+          <div style="font-weight:600;color:var(--txt);margin-bottom:6px;display:flex;align-items:center;gap:7px">
+            <svg width="12" height="12" style="color:var(--ink)"><use href="#ic-link"/></svg>
+            Privacy guarantees
+          </div>
+          <div>Only connects to Notion and LeetCode &mdash; no other servers</div>
+          <div style="margin-top:3px">Token encrypted on your device with AES-256</div>
+          <div style="margin-top:3px">Zero telemetry transmitted anywhere</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div>
+    <div class="ann">Step 3 — Database Setup</div>
+    <div class="frame ob mt6">
+      <div class="fl">Onboarding · Step 3 of 5</div>
+      <div class="ob-prog">
+        <div class="ob-step done"><svg width="12" height="12"><use href="#ic-check"/></svg></div>
+        <div class="ob-line done"></div>
+        <div class="ob-step done"><svg width="12" height="12"><use href="#ic-check"/></svg></div>
+        <div class="ob-line done"></div>
+        <div class="ob-step now">3</div>
+        <div class="ob-line"></div>
+        <div class="ob-step">4</div>
+        <div class="ob-line"></div>
+        <div class="ob-step">5</div>
+      </div>
+      <div class="ob-body">
+        <div style="font-size:14px;font-weight:700;margin-bottom:14px">Choose your database</div>
+        <div class="db-opt sel">
+          <div style="color:var(--ink)"><svg width="18" height="18"><use href="#ic-db"/></svg></div>
+          <div>
+            <div class="db-name">Create new database</div>
+            <div class="db-meta">LeetNote sets it up automatically in your workspace</div>
+          </div>
+          <div class="db-radio sel"></div>
+        </div>
+        <div class="db-opt">
+          <div style="color:var(--txt3)"><svg width="18" height="18"><use href="#ic-db"/></svg></div>
+          <div>
+            <div class="db-name">DSA Practice Log</div>
+            <div class="db-meta">Existing &nbsp;&middot;&nbsp; 47 entries &nbsp;&middot;&nbsp; compatible</div>
+          </div>
+          <div class="db-radio"></div>
+        </div>
+        <div class="db-opt">
+          <div style="color:var(--txt3)"><svg width="18" height="18"><use href="#ic-db"/></svg></div>
+          <div>
+            <div class="db-name">Interview Prep</div>
+            <div class="db-meta">Existing &nbsp;&middot;&nbsp; needs schema update</div>
+          </div>
+          <div class="db-radio"></div>
+        </div>
+        <button class="ob-btn" style="margin-top:14px">
+          Use Selected Database
+          <svg width="13" height="13"><use href="#ic-arrow-r"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     CONTEXT MENU & TOASTS
+═══════════════════════════════════════════════ -->
+<div id="c-context" class="canvas">
+  <div class="sec-lbl">Context Menu — injected on discussion pages &nbsp;|&nbsp; Toasts — bottom-right corner</div>
+
+  <div>
+    <div class="ann">Browser Context Menu (discussion page)</div>
+    <div class="ctx mt6">
+      <div class="ctx-item">
+        <span class="ic"><svg width="12" height="12"><use href="#ic-link"/></svg></span>
+        Open Link in New Tab
+      </div>
+      <div class="ctx-item">Copy Link Address</div>
+      <div class="ctx-div"></div>
+      <div class="ctx-item">
+        Copy Selected Text
+        <span class="ctx-kb">Ctrl+C</span>
+      </div>
+      <div class="ctx-div"></div>
+      <div class="ctx-item feat">
+        <span class="ic"><svg width="12" height="12"><use href="#ic-clip"/></svg></span>
+        <strong>Clip to LeetNote</strong>
+      </div>
+      <div class="ctx-div"></div>
+      <div class="ctx-item">Search Web for &ldquo;&hellip;&rdquo;</div>
+      <div class="ctx-item">Inspect Element<span class="ctx-kb">Q</span></div>
+    </div>
+  </div>
+
+  <div>
+    <div class="ann">Toast Notifications</div>
+    <div class="toasts mt6">
+
+      <!-- SUCCESS -->
+      <div class="toast ok">
+        <span class="t-ico ic" style="color:var(--ok)"><svg width="15" height="15"><use href="#ic-check"/></svg></span>
+        <div style="flex:1">
+          <div class="t-title">Saved to Notion</div>
+          <div class="t-sub">Two Sum &nbsp;#1 &nbsp;&middot;&nbsp; Attempt 2</div>
+          <div class="t-acts">
+            <button class="t-btn p">
+              <svg width="11" height="11"><use href="#ic-notion"/></svg>
+              View in Notion
+            </button>
+          </div>
+        </div>
+        <span class="t-close ic"><svg width="12" height="12"><use href="#ic-close"/></svg></span>
+      </div>
+
+      <!-- QUEUED -->
+      <div class="toast warn">
+        <span class="t-ico ic" style="color:var(--warn)"><svg width="15" height="15"><use href="#ic-queue"/></svg></span>
+        <div style="flex:1">
+          <div class="t-title">Saved Locally</div>
+          <div class="t-sub">Will sync when Notion is reachable</div>
+        </div>
+        <span class="t-close ic"><svg width="12" height="12"><use href="#ic-close"/></svg></span>
+      </div>
+
+      <!-- ERROR -->
+      <div class="toast err">
+        <span class="t-ico ic" style="color:var(--err)"><svg width="15" height="15"><use href="#ic-alert"/></svg></span>
+        <div style="flex:1">
+          <div class="t-title">Sync Failed (5 attempts)</div>
+          <div class="t-sub">Two Sum &nbsp;&middot;&nbsp; Couldn't reach Notion</div>
+          <div class="t-acts">
+            <button class="t-btn p">
+              <svg width="11" height="11"><use href="#ic-retry"/></svg>
+              Retry Now
+            </button>
+            <button class="t-btn g">Details</button>
+          </div>
+        </div>
+        <span class="t-close ic"><svg width="12" height="12"><use href="#ic-close"/></svg></span>
+      </div>
+
+    </div>
+
+    <!-- Inline cursor toast -->
+    <div class="mt18">
+      <div class="ann">Inline cursor toast (clip confirmation)</div>
+      <div class="clip-toast mt6">
+        <span class="ic" style="color:var(--ink)"><svg width="13" height="13"><use href="#ic-clip"/></svg></span>
+        <span class="clip-toast-txt">Clipped &nbsp;(2)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ERROR STATES -->
+  <div>
+    <div class="ann">Sidebar Error Banners</div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-top:6px;width:310px">
+
+      <div style="background:rgba(168,88,88,0.08);border:1px solid rgba(168,88,88,0.25);border-left:2px solid var(--err);padding:9px 12px;font-size:11px">
+        <div style="display:flex;align-items:center;gap:7px;font-weight:600;color:var(--err);margin-bottom:5px">
+          <svg width="12" height="12"><use href="#ic-alert"/></svg>
+          Notion session expired
+        </div>
+        <div style="color:var(--txt2);margin-bottom:8px">Your entry has been saved locally.</div>
+        <button class="t-btn p" style="font-size:11px">
+          <svg width="11" height="11"><use href="#ic-notion"/></svg>
+          Reconnect Notion
+        </button>
+      </div>
+
+      <div style="background:rgba(184,132,58,0.08);border:1px solid rgba(184,132,58,0.25);border-left:2px solid var(--warn);padding:9px 12px;font-size:11px">
+        <div style="display:flex;align-items:center;gap:7px;font-weight:600;color:var(--warn);margin-bottom:5px">
+          <svg width="12" height="12"><use href="#ic-alert"/></svg>
+          Couldn't read problem title
+        </div>
+        <div style="color:var(--txt2);margin-bottom:6px">Enter manually to proceed with save.</div>
+        <div style="background:var(--s3);border:1px solid var(--border);padding:6px 9px;font-size:12px;color:var(--txt2)">Two Sum</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     NOTION PAGE OUTPUT
+═══════════════════════════════════════════════ -->
+<div id="c-notion" class="canvas">
+  <div class="sec-lbl">Notion Page Output — what the saved page looks like inside Notion</div>
+
+  <div class="frame np">
+    <div class="fl" style="background:#1A1A1A;border-bottom-color:#242424;color:#6B6B68">Notion Database Page &nbsp;&middot;&nbsp; Two Sum (Attempt 2)</div>
+    <div class="np-head">
+      <div class="np-icon-area">
+        <svg width="20" height="20" style="color:#6B6B68"><use href="#ic-note"/></svg>
+      </div>
+      <div class="np-title">Two Sum</div>
+      <div class="np-props">
+        <div class="np-prop"><div class="np-pk">Problem Number</div><div class="np-pv">1</div></div>
+        <div class="np-prop"><div class="np-pk">Difficulty</div><div class="np-pv" style="color:#6A9E7A">Easy</div></div>
+        <div class="np-prop"><div class="np-pk">Tags</div><div class="np-pv"><span class="np-tag">Array</span><span class="np-tag">Hash Table</span></div></div>
+        <div class="np-prop"><div class="np-pk">Status</div><div class="np-pv" style="color:#9E9E6A">Solved</div></div>
+        <div class="np-prop"><div class="np-pk">Confidence</div><div class="np-pv">4 / 5 &nbsp;&mdash;&nbsp; Good</div></div>
+        <div class="np-prop"><div class="np-pk">Attempts</div><div class="np-pv">2</div></div>
+        <div class="np-prop"><div class="np-pk">Last Attempted</div><div class="np-pv">June 12, 2024</div></div>
+        <div class="np-prop"><div class="np-pk">Next Review</div><div class="np-pv">June 26, 2024</div></div>
+        <div class="np-prop"><div class="np-pk">URL</div><div class="np-pv" style="color:#9E9E9E;text-decoration:underline;font-size:10px">leetcode.com/problems/two-sum/</div></div>
+      </div>
+    </div>
+
+    <div class="np-content">
+      <div class="np-callout easy">
+        <span class="np-callout-ico"><svg width="14" height="14" style="color:#6A9E7A"><use href="#ic-note"/></svg></span>
+        <div class="np-callout-txt"><strong>Two Sum</strong> &nbsp;&middot;&nbsp; Array, Hash Table &nbsp;&middot;&nbsp; Acceptance: 49.8%</div>
+      </div>
+
+      <div class="np-h2 ink">My Solution</div>
+
+      <div class="np-toggle">
+        <span class="np-toggle-arrow">&#9654;</span>
+        <span class="np-toggle-title">Attempt 1 &mdash; January 15, 2024</span>
+        <span class="np-toggle-sub">Confidence: 3 / 5</span>
+      </div>
+
+      <div class="np-toggle active">
+        <span class="np-toggle-arrow" style="transform:rotate(90deg);display:inline-block">&#9654;</span>
+        <span class="np-toggle-title">Attempt 2 &mdash; June 12, 2024</span>
+        <span class="np-toggle-sub">Confidence: 4 / 5</span>
+      </div>
+      <div class="np-code">
+class Solution:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;def twoSum(self, nums, target):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;seen = {}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for i, n in enumerate(nums):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if target - n in seen:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return [seen[target-n], i]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;seen[n] = i
+      </div>
+      <div style="display:flex;gap:7px;margin:0 13px 8px">
+        <div class="np-callout gray" style="flex:1;margin:0">
+          <span class="np-callout-ico"><svg width="12" height="12" style="color:#6B6B68"><use href="#ic-clock"/></svg></span>
+          <div class="np-callout-txt">Time &nbsp;<strong>O(n)</strong></div>
+        </div>
+        <div class="np-callout gray" style="flex:1;margin:0">
+          <span class="np-callout-ico"><svg width="12" height="12" style="color:#6B6B68"><use href="#ic-db"/></svg></span>
+          <div class="np-callout-txt">Space &nbsp;<strong>O(n)</strong></div>
+        </div>
+      </div>
+
+      <div class="np-h2 ink">My Notes</div>
+      <div style="font-size:12px;color:#C9C9C4;line-height:1.65;margin-bottom:12px">
+        Hash map stores seen values. On each iteration check if complement already exists. Single pass makes it O(n) rather than the naive O(n&sup2;) brute force.
+      </div>
+
+      <div class="np-h2 ink">Community Insights</div>
+      <div class="np-quote">"Use a sliding window to track frequency &mdash; the O(n) solution is elegant once you realize the hash stores future lookups." &mdash; @user23451</div>
+
+      <div class="np-h2 ink">Review Log</div>
+      <div class="np-tbl">
+        <div class="np-tbl-head">
+          <div class="np-tc">Attempt</div>
+          <div class="np-tc">Date</div>
+          <div class="np-tc">Rating</div>
+          <div class="np-tc">Notes</div>
+        </div>
+        <div class="np-tbl-row">
+          <div class="np-td">1</div>
+          <div class="np-td">Jan 15, 2024</div>
+          <div class="np-td">3 / 5</div>
+          <div class="np-td" style="color:#6B6B68">Brute force attempt</div>
+        </div>
+        <div class="np-tbl-row">
+          <div class="np-td">2</div>
+          <div class="np-td">Jun 12, 2024</div>
+          <div class="np-td">4 / 5</div>
+          <div class="np-td" style="color:#6B6B68">Hash map, O(n)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SETTINGS
+═══════════════════════════════════════════════ -->
+<div id="c-settings" class="canvas">
+  <div class="sec-lbl">Settings Panel — 296px · inside popup, replaces main view</div>
+
+  <!-- PREFERENCES -->
+  <div>
+    <div class="ann">Preferences Tab</div>
+    <div class="frame pop mt6" style="width:296px">
+      <div class="fl">Settings</div>
+      <div class="set-tabs">
+        <div class="set-tab">Connection</div>
+        <div class="set-tab on">Preferences</div>
+        <div class="set-tab">Queue</div>
+        <div class="set-tab">About</div>
+      </div>
+      <div class="set-body">
+        <div class="set-row">
+          <div>
+            <div class="set-name">Spaced repetition</div>
+            <div class="set-desc">Calculate next review date on save</div>
+          </div>
+          <div class="tog"></div>
+        </div>
+        <div class="set-row">
+          <div>
+            <div class="set-name">Community clipping</div>
+            <div class="set-desc">Right-click to clip from discussion</div>
+          </div>
+          <div class="tog"></div>
+        </div>
+        <div class="set-row">
+          <div>
+            <div class="set-name">Auto-capture code</div>
+            <div class="set-desc">Snapshot editor on sidebar open</div>
+          </div>
+          <div class="tog off"></div>
+        </div>
+        <div class="set-row">
+          <div><div class="set-name">Keyboard shortcut</div></div>
+          <div class="kbd">Ctrl+Shift+N</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUEUE -->
+  <div>
+    <div class="ann">Queue Tab</div>
+    <div class="frame pop mt6" style="width:296px">
+      <div class="fl">Settings</div>
+      <div class="set-tabs">
+        <div class="set-tab">Connection</div>
+        <div class="set-tab">Preferences</div>
+        <div class="set-tab on">Queue</div>
+        <div class="set-tab">About</div>
+      </div>
+      <div class="set-body">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:11px">
+          <div style="font-size:12px;font-weight:600;color:var(--warn);display:flex;align-items:center;gap:6px">
+            <svg width="12" height="12"><use href="#ic-alert"/></svg>
+            2 items pending
+          </div>
+          <div style="font-size:11px;color:var(--ink);cursor:pointer;display:flex;align-items:center;gap:4px">
+            <svg width="11" height="11"><use href="#ic-retry"/></svg>
+            Retry All
+          </div>
+        </div>
+        <div style="border:1px solid var(--border);overflow:hidden">
+          <div style="padding:9px 11px;border-bottom:1px solid var(--rule)">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start">
+              <div>
+                <div style="font-size:12px;font-weight:600">Two Sum</div>
+                <div style="font-size:10px;color:var(--txt3);margin-top:2px;font-family:var(--mono)">3 attempts &nbsp;&middot;&nbsp; 2h ago</div>
+              </div>
+              <div style="display:flex;gap:5px">
+                <div style="font-size:10px;font-weight:700;color:var(--ink);cursor:pointer;padding:3px 8px;border:1px solid var(--ink-line);letter-spacing:0.06em">RETRY</div>
+                <div style="font-size:10px;color:var(--err);cursor:pointer;padding:3px 8px;border:1px solid rgba(168,88,88,0.25);letter-spacing:0.06em">DEL</div>
+              </div>
+            </div>
+          </div>
+          <div style="padding:9px 11px">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start">
+              <div>
+                <div style="font-size:12px;font-weight:600">Add Two Numbers</div>
+                <div style="font-size:10px;color:var(--txt3);margin-top:2px;font-family:var(--mono)">1 attempt &nbsp;&middot;&nbsp; 45m ago</div>
+              </div>
+              <div style="display:flex;gap:5px">
+                <div style="font-size:10px;font-weight:700;color:var(--ink);cursor:pointer;padding:3px 8px;border:1px solid var(--ink-line);letter-spacing:0.06em">RETRY</div>
+                <div style="font-size:10px;color:var(--err);cursor:pointer;padding:3px 8px;border:1px solid rgba(168,88,88,0.25);letter-spacing:0.06em">DEL</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONNECTION -->
+  <div>
+    <div class="ann">Connection Tab</div>
+    <div class="frame pop mt6" style="width:296px">
+      <div class="fl">Settings</div>
+      <div class="set-tabs">
+        <div class="set-tab on">Connection</div>
+        <div class="set-tab">Preferences</div>
+        <div class="set-tab">Queue</div>
+        <div class="set-tab">About</div>
+      </div>
+      <div class="set-body">
+        <div style="background:var(--s2);border:1px solid var(--border);padding:11px 12px;border-left:2px solid var(--ok);margin-bottom:11px">
+          <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;color:var(--ok);margin-bottom:7px">CONNECTED</div>
+          <div style="font-size:12px;font-weight:600;margin-bottom:3px">My Workspace</div>
+          <div style="font-size:11px;color:var(--txt2);display:flex;align-items:center;gap:5px">
+            <svg width="11" height="11"><use href="#ic-db"/></svg>
+            DSA Practice Log
+          </div>
+        </div>
+        <button class="pop-btn sec" style="margin-bottom:6px">
+          <svg width="12" height="12"><use href="#ic-db"/></svg>
+          Change Database
+        </button>
+        <button class="pop-btn sec" style="color:var(--err);border-color:rgba(168,88,88,0.25)">
+          <svg width="12" height="12"><use href="#ic-disconnect"/></svg>
+          Disconnect Notion
+        </button>
+        <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--rule)">
+          <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;color:var(--txt3);margin-bottom:8px">DANGER ZONE</div>
+          <button class="pop-btn sec" style="color:var(--err);border-color:rgba(168,88,88,0.25);font-size:11px">
+            Reset All Data &amp; Disconnect
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     STATES & TOKENS
+═══════════════════════════════════════════════ -->
+<div id="c-states" class="canvas">
+  <div class="sec-lbl">Extension Icon States</div>
+
+  <div class="st-row">
+    <div class="st-item">
+      <div class="st-mark"><svg width="18" height="18"><use href="#ic-note"/></svg></div>
+      <div class="st-lbl">Idle<br><span style="color:var(--txt4)">not on LeetCode</span></div>
+    </div>
+    <div class="st-item">
+      <div class="st-mark active"><svg width="18" height="18"><use href="#ic-note"/></svg></div>
+      <div class="st-lbl">Active<br><span style="color:var(--txt4)">on LeetCode</span></div>
+    </div>
+    <div class="st-item">
+      <div class="st-mark active" style="border-color:var(--ok);color:var(--ok)">
+        <svg width="18" height="18"><use href="#ic-check"/></svg>
+        <div class="st-dot" style="background:var(--ok)"></div>
+      </div>
+      <div class="st-lbl">Synced<br><span style="color:var(--txt4)">just saved</span></div>
+    </div>
+    <div class="st-item">
+      <div class="st-mark warn">
+        <svg width="18" height="18"><use href="#ic-queue"/></svg>
+        <div class="st-dot" style="background:var(--warn)"></div>
+      </div>
+      <div class="st-lbl">Queued<br><span style="color:var(--txt4)">2 pending</span></div>
+    </div>
+    <div class="st-item">
+      <div class="st-mark err">
+        <svg width="18" height="18"><use href="#ic-alert"/></svg>
+        <div class="st-dot" style="background:var(--err)"></div>
+      </div>
+      <div class="st-lbl">Error<br><span style="color:var(--txt4)">sync failed</span></div>
+    </div>
+  </div>
+
+  <div class="sec-lbl mt18">Difficulty Indicators</div>
+  <div class="row mt6">
+    <span class="diff e">Easy</span>
+    <span class="diff m">Medium</span>
+    <span class="diff h">Hard</span>
+  </div>
+
+  <div class="sec-lbl mt18">Confidence Rating States (1 – 5)</div>
+  <div style="display:flex;flex-direction:column;gap:11px;margin-top:6px">
+    <div style="display:flex;align-items:center;gap:7px">
+      <div class="cnode f0">1</div><div class="cnode empty">2</div><div class="cnode empty">3</div><div class="cnode empty">4</div><div class="cnode empty">5</div>
+      <span style="font-size:11px;color:var(--err)">Blackout &mdash; review tomorrow</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:7px">
+      <div class="cnode f0">1</div><div class="cnode f0">2</div><div class="cnode empty">3</div><div class="cnode empty">4</div><div class="cnode empty">5</div>
+      <span style="font-size:11px;color:var(--warn)">Hard &mdash; review in 3 days</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:7px">
+      <div class="cnode f0">1</div><div class="cnode f0">2</div><div class="cnode f1">3</div><div class="cnode empty">4</div><div class="cnode empty">5</div>
+      <span style="font-size:11px;color:var(--warn)">OK &mdash; review in 7 days</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:7px">
+      <div class="cnode f0">1</div><div class="cnode f0">2</div><div class="cnode f1">3</div><div class="cnode f2">4</div><div class="cnode empty">5</div>
+      <span style="font-size:11px;color:var(--ok)">Good &mdash; review in 14 days</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:7px">
+      <div class="cnode f0">1</div><div class="cnode f0">2</div><div class="cnode f1">3</div><div class="cnode f2">4</div><div class="cnode f2">5</div>
+      <span style="font-size:11px;color:var(--ok)">Crystal clear &mdash; review in 30 days</span>
+    </div>
+  </div>
+
+  <div class="sec-lbl mt18">Color Token Reference</div>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px">
+    <div style="display:flex;flex-direction:column;gap:4px">
+      <div style="width:80px;height:36px;background:var(--bg);border:1px solid var(--border)"></div>
+      <div style="font-size:9px;color:var(--txt3);font-family:var(--mono)">--bg<br>#111110</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:4px">
+      <div style="width:80px;height:36px;background:var(--s2);border:1px solid var(--border)"></div>
+      <div style="font-size:9px;color:var(--txt3);font-family:var(--mono)">--s2<br>#222120</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:4px">
+      <div style="width:80px;height:36px;background:var(--s3);border:1px solid var(--border)"></div>
+      <div style="font-size:9px;color:var(--txt3);font-family:var(--mono)">--s3<br>#2A2927</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:4px">
+      <div style="width:80px;height:36px;background:var(--ink)"></div>
+      <div style="font-size:9px;color:var(--txt3);font-family:var(--mono)">--ink<br>#C4A96A</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:4px">
+      <div style="width:80px;height:36px;background:var(--txt)" style="color:var(--bg)"></div>
+      <div style="font-size:9px;color:var(--txt3);font-family:var(--mono)">--txt<br>#DDD8CE</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:4px">
+      <div style="width:80px;height:36px;background:var(--ok)"></div>
+      <div style="font-size:9px;color:var(--txt3);font-family:var(--mono)">--ok<br>#6A9E7A</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:4px">
+      <div style="width:80px;height:36px;background:var(--warn)"></div>
+      <div style="font-size:9px;color:var(--txt3);font-family:var(--mono)">--warn<br>#B8843A</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:4px">
+      <div style="width:80px;height:36px;background:var(--err)"></div>
+      <div style="font-size:9px;color:var(--txt3);font-family:var(--mono)">--err<br>#A85858</div>
+    </div>
+  </div>
+
+  <div class="sec-lbl mt18">Icon System (monochromatic SVG sprite)</div>
+  <div style="display:flex;flex-wrap:wrap;gap:20px;margin-top:6px">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+      <svg width="20" height="20" style="color:var(--ink)"><use href="#ic-save"/></svg>
+      <span style="font-size:9px;color:var(--txt3);font-family:var(--mono)">ic-save</span>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+      <svg width="20" height="20" style="color:var(--ink)"><use href="#ic-note"/></svg>
+      <span style="font-size:9px;color:var(--txt3);font-family:var(--mono)">ic-note</span>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+      <svg width="20" height="20" style="color:var(--ink)"><use href="#ic-code"/></svg>
+      <span style="font-size:9px;color:var(--txt3);font-family:var(--mono)">ic-code</span>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+      <svg width="20" height="20" style="color:var(--ink)"><use href="#ic-clock"/></svg>
+      <span style="font-size:9px;color:var(--txt3);font-family:var(--mono)">ic-clock</span>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+      <svg width="20" height="20" style="color:var(--ink)"><use href="#ic-star"/></svg>
+      <span style="font-size:9px;color:var(--txt3);font-family:var(--mono)">ic-star</span>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+      <svg width="20" height="20" style="color:var(--ink)"><use href="#ic-clip"/></svg>
+      <span style="font-size:9px;color:var(--txt3);font-family:var(--mono)">ic-clip</span>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+      <svg width="20" height="20" style="color:var(--ink)"><use href="#ic-sliders"/></svg>
+      <span style="font-size:9px;color:var(--txt3);font-family:var(--mono)">ic-sliders</span>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+      <svg width="20" height="20" style="color:var(--ink)"><use href="#ic-layers"/></svg>
+      <span style="font-size:9px;color:var(--txt3);font-family:var(--mono)">ic-layers</span>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+      <svg width="20" height="20" style="color:var(--ink)"><use href="#ic-calendar"/></svg>
+      <span style="font-size:9px;color:var(--txt3);font-family:var(--mono)">ic-calendar</span>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+      <svg width="20" height="20" style="color:var(--ink)"><use href="#ic-alert"/></svg>
+      <span style="font-size:9px;color:var(--txt3);font-family:var(--mono)">ic-alert</span>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+      <svg width="20" height="20" style="color:var(--ink)"><use href="#ic-retry"/></svg>
+      <span style="font-size:9px;color:var(--txt3);font-family:var(--mono)">ic-retry</span>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+      <svg width="20" height="20" style="color:var(--ink)"><use href="#ic-db"/></svg>
+      <span style="font-size:9px;color:var(--txt3);font-family:var(--mono)">ic-db</span>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+      <svg width="20" height="20" style="color:var(--ink)"><use href="#ic-notion"/></svg>
+      <span style="font-size:9px;color:var(--txt3);font-family:var(--mono)">ic-notion</span>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+      <svg width="20" height="20" style="color:var(--ink)"><use href="#ic-queue"/></svg>
+      <span style="font-size:9px;color:var(--txt3);font-family:var(--mono)">ic-queue</span>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+      <svg width="20" height="20" style="color:var(--ink)"><use href="#ic-check"/></svg>
+      <span style="font-size:9px;color:var(--txt3);font-family:var(--mono)">ic-check</span>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+      <svg width="20" height="20" style="color:var(--ink)"><use href="#ic-disconnect"/></svg>
+      <span style="font-size:9px;color:var(--txt3);font-family:var(--mono)">ic-disconnect</span>
+    </div>
+  </div>
+</div>
+
+<script>
+function show(id, el) {
+  document.querySelectorAll('.canvas').forEach(c => c.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+  document.getElementById('c-' + id).classList.add('on');
+  el.classList.add('on');
+}
+</script>
+</body>
+</html>
